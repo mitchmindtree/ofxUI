@@ -60,8 +60,6 @@ ofxUICanvas::ofxUICanvas(const ofxUICanvas &other)
 : bInsideCanvas(other.bInsideCanvas),
 state(other.state),
 hasSharedResources(other.hasSharedResources),
-autoDraw(other.autoDraw),
-autoUpdate(other.autoUpdate),
 widgets_map(other.widgets_map),
 widgets(other.widgets),
 widgetsAreModal(other.widgetsAreModal),
@@ -126,8 +124,6 @@ ofxUICanvas& ofxUICanvas::operator=(const ofxUICanvas &other)
     bInsideCanvas = other.bInsideCanvas;
     state = other.state;
     hasSharedResources = other.hasSharedResources;
-    autoDraw = other.autoDraw;
-    autoUpdate = other.autoUpdate;
     widgets_map = other.widgets_map;
     widgets = other.widgets;
     widgetsAreModal = other.widgetsAreModal;
@@ -233,8 +229,6 @@ void ofxUICanvas::init(int x, int y, int w, int h, ofxUICanvas *sharedResources)
     bDrawWidgetPadding = false;
     bDrawWidgetPaddingOutline = false;
     
-    autoDraw = true;
-    autoUpdate = true;
     bTriggerWidgetsUponLoad = true;
     
     if(sharedResources != NULL)
@@ -3018,16 +3012,6 @@ void ofxUICanvas::removeWidget(string _name)
     {
         removeWidget(w);
     }
-}
-
-void ofxUICanvas::setAutoUpdate(bool _autoUpdate)
-{
-    autoUpdate = _autoUpdate;
-}
-
-void ofxUICanvas::setAutoDraw(bool _autoDraw)
-{
-    autoDraw = _autoDraw;
 }
 
 void ofxUICanvas::setPosition(int x, int y)
