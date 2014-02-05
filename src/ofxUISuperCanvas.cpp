@@ -33,8 +33,29 @@ hitPoint(other.hitPoint),
 deltaTime(other.deltaTime),
 lastHitTime(other.lastHitTime),
 bIsMinified(other.bIsMinified),
-bTitleLabelHit(other.bTitleLabelHit)
+bTitleLabelHit(other.bTitleLabelHit),
+bUseHeader(other.bUseHeader)
 {
+    if (other.canvasTitle) {
+        canvasTitle = new ofxUILabel(*other.canvasTitle);
+        headerWidgets.push_back(canvasTitle);
+        addWidgetPosition(canvasTitle, widgetPosition, widgetAlign);
+    }
+    else {
+        canvasTitle = NULL;
+    }
+}
+
+ofxUISuperCanvas& ofxUISuperCanvas::operator=(const ofxUISuperCanvas &other)
+{
+    size = other.size;
+    title = other.title;
+    hitPoint = other.hitPoint;
+    deltaTime = other.deltaTime;
+    lastHitTime = other.lastHitTime;
+    bIsMinified = other.bIsMinified;
+    bTitleLabelHit = other.bTitleLabelHit;
+    bUseHeader = other.bUseHeader;
     if (other.canvasTitle) {
         canvasTitle = new ofxUILabel(*other.canvasTitle);
         headerWidgets.push_back(canvasTitle);
@@ -81,6 +102,7 @@ void ofxUISuperCanvas::superInit(string _label, int _size)
     addWidgetPosition(canvasTitle, widgetPosition, widgetAlign);
     deltaTime = .35;
     lastHitTime = ofGetElapsedTimef();
+    bUseHeader = true;
     bIsMinified = false;
     lastHitTime = 0;
     bTitleLabelHit = false;
@@ -90,6 +112,29 @@ void ofxUISuperCanvas::superInit(string _label, int _size)
 void ofxUISuperCanvas::setDeltaTime(float _deltaTime)
 {
     deltaTime = _deltaTime;
+}
+
+void ofxUISuperCanvas::setUseHeader(bool _useHeader)
+{
+    bUseHeader = _useHeader;
+    if (!bUseHeader) {
+        for(vector<ofxUIWidget *>::iterator it = headerWidgets.begin();
+            it != headerWidgets.end(); ++it)
+        {
+            ofxUIWidget *w = (*it);
+            removeWidget(w);
+        }
+        headerWidgets.clear();
+        canvasTitle = NULL;
+    }
+    else {
+        if (!headerWidgets.size()) {
+            canvasTitle = new ofxUILabel(rect->getWidth()-widgetSpacing*2, title, size);
+            canvasTitle->setEmbedded(true);
+            headerWidgets.push_back(canvasTitle);
+            addWidgetPosition(canvasTitle, widgetPosition, widgetAlign);
+        }
+    }
 }
 
 void ofxUISuperCanvas::setMinified(bool _bIsMinified)
@@ -194,17 +239,19 @@ void ofxUISuperCanvas::onMouseReleased(ofMouseEventArgs& data)
 
 void ofxUISuperCanvas::onMousePressed(ofMouseEventArgs& data)
 {
-    if(rect->inside(data.x, data.y) && canvasTitle->isHit(data.x, data.y))
+    if(rect->inside(data.x, data.y) && bUseHeader)
     {
-        bTitleLabelHit = true;
-        hitPoint.set(data.x - rect->getX(), data.y - rect->getY());
-        
-        if((ofGetElapsedTimef() - lastHitTime) < deltaTime)
-        {
-            toggleMinified();
-            return;
+        if (canvasTitle->isHit(data.x, data.y)) {
+            bTitleLabelHit = true;
+            hitPoint.set(data.x - rect->getX(), data.y - rect->getY());
+            
+            if((ofGetElapsedTimef() - lastHitTime) < deltaTime)
+            {
+                toggleMinified();
+                return;
+            }
+            lastHitTime = ofGetElapsedTimef();
         }
-        lastHitTime = ofGetElapsedTimef();
     }
     mousePressed(data.x, data.y, data.button);
 }
@@ -300,10 +347,12 @@ void ofxUISuperCanvas::removeWidgets()
     ofxUICanvas::removeWidgets();
     headerWidgets.clear();
     
-    canvasTitle = new ofxUILabel(rect->getWidth()-widgetSpacing*2, title, size);
-    canvasTitle->setEmbedded(true);
-    headerWidgets.push_back(canvasTitle);
-    addWidgetPosition(canvasTitle, widgetPosition, widgetAlign);
+    if (bUseHeader) {
+        canvasTitle = new ofxUILabel(rect->getWidth()-widgetSpacing*2, title, size);
+        canvasTitle->setEmbedded(true);
+        headerWidgets.push_back(canvasTitle);
+        addWidgetPosition(canvasTitle, widgetPosition, widgetAlign);
+    }
 }
 
 void ofxUISuperCanvas::minify()

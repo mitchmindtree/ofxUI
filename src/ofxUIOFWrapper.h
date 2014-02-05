@@ -44,6 +44,11 @@ class ofxUIAppCBGlue
 public:        
     ofBaseApp *app;
     
+    ofxUIAppCBGlue(){
+        bAutoDraw = true;
+        bAutoUpdate = true;
+    }
+    
     void EnableCallbacks()
 	{
         enableAppDrawCallback();
@@ -190,12 +195,16 @@ public:
     
     void onUpdate(ofEventArgs &data)
     {
-        update();
+        if (bAutoUpdate) {
+            update();
+        }
     }
         
     void onDraw(ofEventArgs &data)
     {
-        draw();
+        if (bAutoDraw) {
+            draw();
+        }
     }
         
     void onExit(ofEventArgs &data)
@@ -341,6 +350,20 @@ public:
     }
 
 #endif
+    
+    void setAutoUpdate(bool _autoUpdate)
+    {
+        bAutoUpdate = _autoUpdate;
+    }
+    
+    void setAutoDraw(bool _autoDraw)
+    {
+        bAutoDraw = _autoDraw;
+    }
+    
+    bool bAutoDraw;
+    bool bAutoUpdate;
+    
 };
 
 static void ofxUISetColor(ofxUIColor color, float alpha)

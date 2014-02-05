@@ -31,6 +31,7 @@ class ofxUISuperCanvas : public ofxUICanvas
 {
 public:
     ofxUISuperCanvas(const ofxUISuperCanvas &other);
+    ofxUISuperCanvas& operator=(const ofxUISuperCanvas &other);
     ofxUISuperCanvas(string _label, ofxUIRectangle r, int _size = OFX_UI_FONT_MEDIUM);
     ofxUISuperCanvas(string _label, float x, float y, float w, float h, int _size = OFX_UI_FONT_MEDIUM);
     ofxUISuperCanvas(string _label, float x, float y, float w, float h, ofxUICanvas *sharedResources, int _size = OFX_UI_FONT_MEDIUM);
@@ -38,6 +39,7 @@ public:
     ofxUISuperCanvas(string _label, ofxUICanvas *sharedResources, int _size = OFX_UI_FONT_MEDIUM);
     void superInit(string _label, int _size);
     void setDeltaTime(float _deltaTime);
+    void setUseHeader(bool useTitle);
     void setMinified(bool _bIsMinified);
     bool isMinified();
     void toggleMinified();
@@ -74,4 +76,5 @@ protected:
     float lastHitTime;
     bool bIsMinified;
     bool bTitleLabelHit;
+    bool bUseHeader;
 };

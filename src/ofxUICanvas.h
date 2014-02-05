@@ -37,8 +37,8 @@ class ofxUICanvas : public ofxUIWidget, public ofxUIAppCBGlue
 public:
     ~ofxUICanvas();
     ofxUICanvas(float defaultWidthSize = OFX_UI_GLOBAL_CANVAS_WIDTH, float defaultHeightSize = OFX_UI_GLOBAL_CANVAS_WIDTH);
-    ofxUICanvas(const ofxUICanvas &other);              // Mitchell Nordine 2/2/14
-    ofxUICanvas& operator=(const ofxUICanvas &other);   // Mitchell Nordine 2/2/14
+    ofxUICanvas(const ofxUICanvas &other);            // Mitchell Nordine 2/2/14
+    ofxUICanvas& operator=(const ofxUICanvas &other); // Mitchell Nordine 2/2/14
     ofxUICanvas(ofxUIRectangle r);
     ofxUICanvas(float x, float y, float w, float h);
     ofxUICanvas(float x, float y, float w, float h, ofxUICanvas *sharedResources);
@@ -306,8 +306,6 @@ public:
 	void setWidgetColor(int _target, ofxUIColor _color);
     ofxUIWidget *getWidget(string _name, int widgetID = -1);
     void removeWidget(string _name);
-    virtual void setAutoUpdate(bool _autoUpdate);
-    virtual void setAutoDraw(bool _autoDraw);
     virtual void setPosition(int x, int y);
     virtual void setHeight(float _height);
     virtual void setWidth(float _width);
@@ -336,8 +334,6 @@ protected:
 	ofxUIEventArgs *GUIevent; 
     int state;
     bool hasSharedResources;
-    bool autoDraw;
-    bool autoUpdate;
     
     multimap<string, ofxUIWidget*> widgets_map;
 	vector<ofxUIWidget*> widgets;
