@@ -41,19 +41,46 @@ class ofxUIEnvelopeEditor : public ofxUIWidgetWithLabel {
     
 public:
     
-    ofxUIEnvelopeEditor(string _name, float w, float h, float x = 0, float y = 0);
-    ofxUIEnvelopeEditor(string _name, ofxUIEnvelope *_envelope, float w, float h, float x = 0, float y = 0);
-    ~ofxUIEnvelopeEditor();
-    void init(string _name, ofxUIEnvelope *_envelope, float w, float h, float x = 0, float y = 0);
-    void setParent(ofxUIWidget *_parent); 
+    ofxUIEnvelopeEditor(string _name,
+                        float w, float h, float x = 0,
+                        float y = 0) : ofxUIWidgetWithLabel()
+    {
+        init(_name, ofVec2f(0.5f,0.0f), w, h, x, y);
+    }
+    
+    ofxUIEnvelopeEditor(string _name, ofxUIEnvelope *_envelope,
+                        float w, float h, float x = 0,
+                        float y = 0) : ofxUIWidgetWithLabel()
+    {
+        envelope = _envelope;   // Points to ofxUIEnvelope that you want to edit
+        init(_name, ofVec2f(0.5f,0.0f), w, h, x, y);
+    }
+    
+    void init(string _name, ofVec2f _value,
+              float w, float h, float x = 0, float y = 0);
+    virtual void update();
     void updateEnvelopeData();
-    void drawFill();
-    void mouseMoved(int x, int y);
+    virtual void setDrawPadding(bool _draw_padded_rect);
+    virtual void setDrawPaddingOutline(bool _draw_padded_rect_outline);
+    virtual void drawFill();
+    virtual void drawFillHighlight();
+    void mouseMoved(int x, int y );
     void mouseDragged(int x, int y, int button);
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
+    void keyPressed(int key);
+    void keyReleased(int key);
+    void windowResized(int w, int h);
+	void input(float x, float y);
 	void updateLabel();
     void stateChange();
+    void setVisible(bool _visible);
+	void setValue(ofVec2f _value);
+	ofVec2f getValue();
+	ofVec2f getPercentValue();
+    ofxUIVec3f getScaledValue();
+	//ofxUILabel *getLabel();
+	void setParent(ofxUIWidget *_parent);
     bool isDraggable();
     void setLabelPrecision(int _precision);
 #ifndef OFX_UI_NO_XML
@@ -61,31 +88,43 @@ public:
     virtual void loadState(ofxXmlSettings *XML);
 #endif
     
-    void addEnvelopePoint(float x, float y);
+    /* Envelope Functions */
+    
+    void addEnvelopePoint();
     void setEnvelope(ofxUIEnvelope *_envelope);
     void drawEnvelope();
-    bool checkForClosestPointNode(float x, float y);
-    bool deleteClosestPointNode(float x, float y);
-    bool checkForClosestCurveNode(int i, float x, float y);
-    void moveGrabbedPoint(float x, float y);
-    void moveGrabbedCurve(float x, float y);
+    void drawFrequencyEnvelope();
+    void checkForPointNode();
+    void checkForCurveNode(int i);
+    void moveGrabbedPoint();
+    void moveGrabbedCurve();
+    double toFrequency(double value);
+    double toOriginal(double frequency);
     
-protected:
-    float hitThreshold;
-    float pointNodeRadius;
-    float pointNodeRectWidth;
-    float pointNodeRectHeight;
+    /* Envelope variables */
     
-    ofxUIVec3f *hitPoint;
-    ofxUIVec3f *hitCurve;
-    ofxUIVec3f *hitCurveNext;    
-    bool bHitPoint;
-    bool bHitCurve;
+    bool isFrequency = false;
+    bool isPointGrabbed = false;
+    bool isCurveGrabbed = false;
+    bool isRightClick = false;
+    
+    float pointNodeRadius = 5.0f;
+    float pointNodeRectWidth = 6.0f;
+    float pointNodeRectHeight = 6.0f;
+    
     ofPolyline polyline;
     ofxUIEnvelope *envelope;
+    ofxUIEnvelope tempEnv;
+    float envPosX, envPosY, currentX, currentY, nextX, nextY, halfwayBetweenX;
+    ofVec3f *grabbedPoint;
+    ofVec3f *nextPoint;
+    bool stateCheck;
+    
+protected:
+	ofVec2f value;
     int labelPrecision;
     float increment;
-    bool useReference;
+    ofVec2f rangeX, rangeY;
+    
 };
-
 
